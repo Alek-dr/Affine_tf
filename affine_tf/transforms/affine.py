@@ -3,7 +3,7 @@ from math import radians
 
 import tensorflow as tf
 from tensorflow import cos, sin
-from resample import bilinear_interpolation
+from affine_tf.resample import bilinear_interpolation
 
 from .utils import get_identical_coords_matrix, integer_2d_coordinates, unique_coords, full_mask, \
     one_row_coordinates, three_channels, one_channel
@@ -14,7 +14,6 @@ def rotate(image: tf.Variable, angle: float) -> Tuple[tf.Variable, tf.Variable]:
     if len(image.shape) != 3:
         raise ValueError(f"Expected image dims: height x width x channels. Image shape: {image.shape}")
     height, width, channels = image.shape
-    print(f"Image rank 0: {tf.rank(image)}")
     original_coordinates = get_identical_coords_matrix(image)
     dy = tf.divide(height, 2)
     dx = tf.divide(width, 2)

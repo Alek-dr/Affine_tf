@@ -1,7 +1,7 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-from transforms import translation
+from affine_tf.transforms import translation
 
 if __name__ == '__main__':
     img = plt.imread("../data/11.jpg")

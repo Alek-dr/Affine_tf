@@ -9,6 +9,10 @@ This is an implementation of affine transform in tensorflow 2
 * tensorflow >=2.0
 * numpy
 
+```
+python setup.py install
+```
+
 # Examples
 
 ![examples](examples.png)

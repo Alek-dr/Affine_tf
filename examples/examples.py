@@ -1,7 +1,7 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-from transforms import warpAffine, rotate, translation
+from affine_tf.transforms import warpAffine, rotate, translation
 
 if __name__ == '__main__':
     img = plt.imread("../data/11.jpg")

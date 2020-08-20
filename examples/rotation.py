@@ -1,7 +1,7 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-from transforms import rotate
+from affine_tf.transforms import rotate
 
 if __name__ == '__main__':
     img = plt.imread("../data/11.jpg")
