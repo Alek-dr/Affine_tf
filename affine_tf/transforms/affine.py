@@ -52,7 +52,7 @@ def rotate(image: tf.Variable, angle: float) -> Tuple[tf.Variable, tf.Variable]:
     new_img = tf.cond(tf.equal(channels, 3), lambda: new_img, lambda: tf.expand_dims(new_img, axis=2))
 
     new_img = tf.transpose(new_img, perm=[2, 0, 1])
-    miss_values = tf.map_fn(fn=lambda t: bilinear_interpolation(t, new_coords, height, width), elems=new_img)
+    miss_values = bilinear_interpolation(new_img, new_coords)
     new_img = tf.add(new_img, miss_values)
     new_img = tf.transpose(new_img, perm=[1, 2, 0])
     return new_img

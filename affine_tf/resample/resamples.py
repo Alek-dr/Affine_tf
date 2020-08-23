@@ -29,7 +29,27 @@ def miss_values(new_coords, height, width):
     return coords
 
 
-def bilinear_interpolation(image, new_coords, height, width):
+def interpolate_values(image,
+                       empty_coordinates,
+                       left_up_coords,
+                       right_up_coords,
+                       left_down_coords,
+                       right_down_coords):
+    left_up_values = tf.gather_nd(image, left_up_coords)
+    right_up_values = tf.gather_nd(image, right_up_coords)
+    left_down_values = tf.gather_nd(image, left_down_coords)
+    right_down_values = tf.gather_nd(image, right_down_coords)
+
+    values = tf.math.add_n((left_up_values, right_up_values, left_down_values, right_down_values))
+    values = tf.divide(values, 4)
+
+    shape = (image.shape[0], image.shape[1])
+    new_img = tf.scatter_nd(empty_coordinates, values, shape)
+    return new_img
+
+
+def bilinear_interpolation(image, new_coords):
+    height, width = image.shape[1], image.shape[2]
     empty_coordinates = miss_values(new_coords, height, width)
     y = tf.slice(empty_coordinates, [0, 0], [-1, 1])
     x = tf.slice(empty_coordinates, [0, 1], [-1, 1])
@@ -43,14 +63,6 @@ def bilinear_interpolation(image, new_coords, height, width):
     left_down_coords = tf.stack((py1, px0), axis=1)
     right_down_coords = tf.stack((py1, px1), axis=1)
 
-    left_up_values = tf.gather_nd(image, left_up_coords)
-    right_up_values = tf.gather_nd(image, right_up_coords)
-    left_down_values = tf.gather_nd(image, left_down_coords)
-    right_down_values = tf.gather_nd(image, right_down_coords)
-
-    values = tf.math.add_n((left_up_values, right_up_values, left_down_values, right_down_values))
-    values = tf.divide(values, 4)
-
-    shape = (height, width)
-    new_img = tf.scatter_nd(empty_coordinates, values, shape)
-    return new_img
+    coords = (left_up_coords, right_up_coords, left_down_coords, right_down_coords)
+    interp_values = tf.map_fn(fn=lambda t: interpolate_values(t, empty_coordinates, *coords), elems=image)
+    return interp_values
