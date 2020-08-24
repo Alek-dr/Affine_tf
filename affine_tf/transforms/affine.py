@@ -3,9 +3,9 @@ from math import radians
 
 import tensorflow as tf
 from tensorflow import cos, sin
-from affine_tf.resample import bilinear_interpolation
+from affine_tf.resample import interpolation
 
-from .utils import get_identical_coords_matrix, integer_2d_coordinates, unique_coords, full_mask, \
+from affine_tf.utils import get_identical_coords_matrix, integer_2d_coordinates, unique_coords, full_mask, \
     one_row_coordinates, three_channels, one_channel
 
 
@@ -52,7 +52,7 @@ def rotate(image: tf.Variable, angle: float) -> Tuple[tf.Variable, tf.Variable]:
     new_img = tf.cond(tf.equal(channels, 3), lambda: new_img, lambda: tf.expand_dims(new_img, axis=2))
 
     new_img = tf.transpose(new_img, perm=[2, 0, 1])
-    miss_values = bilinear_interpolation(new_img, new_coords)
+    miss_values = interpolation(new_img, new_coords)
     new_img = tf.add(new_img, miss_values)
     new_img = tf.transpose(new_img, perm=[1, 2, 0])
     return new_img
@@ -80,6 +80,18 @@ def translation(image: tf.Variable, dx: int, dy: int) -> tf.Variable:
     return new_img
 
 
+def reflection(image: tf.Variable) -> tf.Variable:
+    """Зеркально отображает изображение"""
+    if len(image.shape) != 3:
+        raise ValueError(f"Expected image dims: height x width x channels. Image shape: {image.shape}")
+    dx = image.shape[1]
+    T = tf.constant([[-1, 0, dx],
+                     [0, 1, 0],
+                     [0, 0, 1]], dtype=tf.float32)
+    reflect = warpAffine(image, T)
+    return reflect
+
+
 def warpAffine(image: tf.Variable, T: tf.Variable) -> tf.Variable:
     if len(image.shape) != 3:
         raise ValueError(f"Expected image dims: height x width x channels. Image shape: {image.shape}")
@@ -104,7 +116,7 @@ def warpAffine(image: tf.Variable, T: tf.Variable) -> tf.Variable:
     new_img = tf.cond(tf.equal(channels, 3), lambda: new_img, lambda: tf.expand_dims(new_img, axis=2))
 
     new_img = tf.transpose(new_img, perm=[2, 0, 1])
-    miss_values = bilinear_interpolation(new_img, new_coords)
+    miss_values = interpolation(new_img, new_coords)
     new_img = tf.add(new_img, miss_values)
     new_img = tf.transpose(new_img, perm=[1, 2, 0])
     return new_img

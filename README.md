@@ -17,6 +17,7 @@ python setup.py install
 
 ![examples](examples.png)
 
-# Known issues
-Interpolation implementation is not correct and works with kind of probability  
-![problem](problem.png)
+# TODO:
+* batch support
+* improve resample method
+* refactor

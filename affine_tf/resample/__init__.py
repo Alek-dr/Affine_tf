@@ -1,1 +1,1 @@
-from .resamples import bilinear_interpolation
+from .resamples import interpolation
