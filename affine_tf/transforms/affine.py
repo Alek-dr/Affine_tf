@@ -1,4 +1,3 @@
-from typing import Tuple
 from math import radians
 
 import tensorflow as tf
@@ -9,7 +8,7 @@ from affine_tf.utils import get_identical_coords_matrix, integer_2d_coordinates,
     one_row_coordinates, three_channels, one_channel
 
 
-def rotate(image: tf.Variable, angle: float) -> Tuple[tf.Variable, tf.Variable]:
+def rotate(image: tf.Variable, angle: float) -> tf.Variable:
     """Поворачивает изображение на угол angle (в градуах)"""
     if len(image.shape) != 3:
         raise ValueError(f"Expected image dims: height x width x channels. Image shape: {image.shape}")
